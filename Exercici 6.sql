@@ -53,23 +53,44 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `optica`.`Vidre`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `optica`.`Vidre` (
+  `id_vidre` INT NOT NULL,
+  `graduació` DECIMAL NOT NULL,
+  `color_vidre` VARCHAR(45) NULL,
+  PRIMARY KEY (`id_vidre`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `optica`.`Ullera`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `optica`.`Ullera` (
   `id_ullera` INT NOT NULL AUTO_INCREMENT,
   `id_marca` INT NOT NULL,
-  `graduació_esq` DECIMAL NOT NULL,
-  `graduació_dta` DECIMAL NOT NULL,
+  `id_vidre_esq` INT NOT NULL,
+  `id_vidre_dta` INT NOT NULL,
   `muntura` VARCHAR(1) NOT NULL,
   `color_muntura` VARCHAR(45) NOT NULL,
-  `color_vidre_esq` VARCHAR(45) NOT NULL,
-  `color_vidre_dta` VARCHAR(45) NOT NULL,
   `preu` DECIMAL NOT NULL,
   PRIMARY KEY (`id_ullera`),
   INDEX `fk_Ullera_Marca1_idx` (`id_marca` ASC) VISIBLE,
+  INDEX `fk_Ullera_Vidre1_idx` (`id_vidre_esq` ASC) VISIBLE,
+  INDEX `fk_Ullera_Vidre2_idx` (`id_vidre_dta` ASC) VISIBLE,
   CONSTRAINT `fk_Ullera_Marca1`
     FOREIGN KEY (`id_marca`)
     REFERENCES `optica`.`Marca` (`id_marca`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Ullera_Vidre1`
+    FOREIGN KEY (`id_vidre_esq`)
+    REFERENCES `optica`.`Vidre` (`id_vidre`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Ullera_Vidre2`
+    FOREIGN KEY (`id_vidre_dta`)
+    REFERENCES `optica`.`Vidre` (`id_vidre`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -116,6 +137,29 @@ CREATE TABLE IF NOT EXISTS `optica`.`Venda` (
   CONSTRAINT `fk_Venda_Client1`
     FOREIGN KEY (`id_client`)
     REFERENCES `optica`.`Client` (`id_client`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `optica`.`Item`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `optica`.`Item` (
+  `id_item` INT NOT NULL AUTO_INCREMENT,
+  `id_venda` INT NOT NULL,
+  `id_ullera` INT NOT NULL,
+  PRIMARY KEY (`id_item`),
+  INDEX `fk_Item_Venda1_idx` (`id_venda` ASC) VISIBLE,
+  INDEX `fk_Item_Ullera1_idx` (`id_ullera` ASC) VISIBLE,
+  CONSTRAINT `fk_Item_Venda1`
+    FOREIGN KEY (`id_venda`)
+    REFERENCES `optica`.`Venda` (`id_venda`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Item_Ullera1`
+    FOREIGN KEY (`id_ullera`)
+    REFERENCES `optica`.`Ullera` (`id_ullera`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
